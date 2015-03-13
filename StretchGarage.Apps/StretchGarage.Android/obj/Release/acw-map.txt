@@ -1,0 +1,2 @@
+StretchGarage.Android.MainActivity;stretchgarage.android.MainActivity
+StretchGarage.Android.MainActivity.HybridWebViewClient;stretchgarage.android.MainActivity_HybridWebViewClient

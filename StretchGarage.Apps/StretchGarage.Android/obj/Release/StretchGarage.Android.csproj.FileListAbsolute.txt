@@ -1,0 +1,13 @@
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\bin\Release\StretchGarage.Android.dll
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\bin\Release\StretchGarage.Android.pdb
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\bin\Release\StretchGarage.Android.apk
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\bin\Release\StretchGarage.Android-Signed.apk
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\StretchGarage.Android.dll
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\StretchGarage.Android.pdb
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\android\bin\StretchGarage.Android.apk
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\res\layout\main.xml
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\res\values\strings.xml
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\res\drawable\icon.png
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\R.cs.flag
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\uploadflags.txt
+C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Release\StretchGarage.Android.csprojResolveAssemblyReference.cache
