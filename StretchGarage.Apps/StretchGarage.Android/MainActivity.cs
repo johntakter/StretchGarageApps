@@ -1,24 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Locations;
 using Android.Runtime;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using Android.OS;
+using Java.Lang;
 using StretchGarage.Android.Views;
 using StretchGarage.Android.Models;
 using StretchGarage.Shared;
+using String = System.String;
+using StringBuilder = System.Text.StringBuilder;
 
 namespace StretchGarage.Android
 {
-    [Activity(Label = "StretchGarage.Android", MainLauncher = true)]
-    public class MainActivity : Activity
+    [Activity(Label = "Get Location", MainLauncher = true, Icon = "@drawable/icon")]
+    public class MainActivity : Activity, ILocationListener
     {
+        //http://developer.xamarin.com/recipes/android/os_device_resources/gps/get_current_device_location/
+        TextView _locationText;
+        TextView _addressText;
+        Location _currentLocation; //Holder of lat/long (_currentLocation.Latitude/Longitude)
+        LocationManager _locationManager;
+        String _locationProvider;
+        private bool _gpsRunning = false;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            SetContentView(Resource.Layout.Main);
+            
+            _addressText = FindViewById<TextView>(Resource.Id.address_text);
+            _locationText = FindViewById<TextView>(Resource.Id.location_text);
+            InitializeLocationManager();
+            
 
+            /*
+            //ORGINAL SAKER!!!
+            base.OnCreate(bundle);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
@@ -39,6 +63,7 @@ namespace StretchGarage.Android
             // Load the rendered HTML into the view with a base URL 
             // that points to the root of the bundled Assets folder
             webView.LoadDataWithBaseURL("file:///android_asset/", page, "text/html", "UTF-8", null);
+             */
 
         }
 
@@ -76,6 +101,64 @@ namespace StretchGarage.Android
                 return true;
             }
         }
+
+        void InitializeLocationManager()
+        {
+            _locationManager = (LocationManager)GetSystemService(LocationService);
+            Criteria criteriaForLocationService = new Criteria
+            {
+                Accuracy = Accuracy.Fine
+            };
+            IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
+
+            if (acceptableLocationProviders.Any())
+            {
+                _locationProvider = acceptableLocationProviders.First();
+            }
+            else
+            {
+                _locationProvider = String.Empty;
+            }
+            
+            Task loop = LoopGps();
+        }
+
+        async Task LoopGps()
+        {
+            int num = 20;
+            while (num != 0)
+            {
+                _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this); //Start gps
+                _gpsRunning = true;
+                await Task.Delay(5000);
+                _locationManager.RemoveUpdates(this); //Stop gps
+                _gpsRunning = false;
+                await Task.Delay(5000);
+                num--;
+            }
+
+            //return true;
+        }
+
+        public void OnLocationChanged(Location location)
+        {
+            _currentLocation = location;
+            
+            if (_currentLocation == null)
+            {
+                _locationText.Text = "Unable to determine your location.";
+            }
+            else
+            {
+                if (_gpsRunning)
+                    _locationText.Text = String.Format("{0},{1}", _currentLocation.Latitude, _currentLocation.Longitude);
+            }
+        }
+
+        public void OnProviderDisabled(string provider){}
+        public void OnProviderEnabled(string provider){}
+        public void OnStatusChanged(string provider, Availability status, Bundle extras){}
+
     }
 }
 

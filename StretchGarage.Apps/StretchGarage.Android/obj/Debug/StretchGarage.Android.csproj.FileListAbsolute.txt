@@ -12,3 +12,17 @@ c:\users\john\documents\visual studio 2013\Projects\StretchGarage.Apps\StretchGa
 c:\users\john\documents\visual studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Debug\res\drawable\icon.png
 c:\users\john\documents\visual studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Debug\R.cs.flag
 c:\users\john\documents\visual studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\obj\Debug\uploadflags.txt
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.dll
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.pdb
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.dll.mdb
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.apk
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android-Signed.apk
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\StretchGarage.Android.csprojResolveAssemblyReference.cache
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\StretchGarage.Android.dll
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\StretchGarage.Android.pdb
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\android\bin\StretchGarage.Android.apk
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\res\layout\main.xml
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\res\values\strings.xml
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\res\drawable\icon.png
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\R.cs.flag
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\uploadflags.txt

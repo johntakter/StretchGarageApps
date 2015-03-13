@@ -1,1 +1,1 @@
-C:\Users\John\Documents\Visual Studio 2013\Projects\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.dll
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.dll
