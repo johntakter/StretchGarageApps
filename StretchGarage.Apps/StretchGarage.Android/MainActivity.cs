@@ -22,27 +22,20 @@ namespace StretchGarage.Android
     [Activity(Label = "Stretch Garage", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity, ILocationListener
     {
-        //http://developer.xamarin.com/recipes/android/os_device_resources/gps/get_current_device_location/
-
         Location _currentLocation; //Holder of lat/long (_currentLocation.Latitude/Longitude)
-        LocationManager _locationManager;
+        LocationManager _locationManager; //Holder of accuracy and locationprovider
         String _locationProvider;
         private bool _gpsRunning = false;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            ActionBar.Hide();
-            SetContentView(Resource.Layout.Main);
+            ActionBar.Hide(); //Hides actionbar that is otherwise shown at the top of the application.
+            SetContentView(Resource.Layout.Main); //Sets layout
 
-            InitializeLocationManager();
+            InitWebView(); //Inits webview
 
-            WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
-            localWebView.Settings.JavaScriptEnabled = true;
-            localWebView.SetWebViewClient(new HybridWebViewClient());
-            localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/ParkingPlace/0");
-            //localWebView.Settings.LoadWithOverviewMode = true;
-            //localWebView.Settings.UseWideViewPort = true;
+            InitializeLocationManager(); //inits gps loop
         }
 
         private class HybridWebViewClient : WebViewClient
@@ -80,27 +73,50 @@ namespace StretchGarage.Android
             }
         }
 
+        /// <summary>
+        /// Initializes the webpage into the application
+        /// </summary>
+        private void InitWebView()
+        {
+            WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
+            localWebView.Settings.JavaScriptEnabled = true;
+            localWebView.SetWebViewClient(new HybridWebViewClient());
+            localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/ParkingPlace/0");
+            //localWebView.Settings.LoadWithOverviewMode = true;
+            //localWebView.Settings.UseWideViewPort = true;
+        }
+
+        #region GPS Loop and Initialization
+        /// <summary>
+        /// Initializes gps function.
+        /// Starts with getting provider for location
+        /// and also sets accuracy of gps.
+        /// When everything is ok it starts the loop.
+        /// </summary>
         void InitializeLocationManager()
         {
+            //http://developer.xamarin.com/recipes/android/os_device_resources/gps/get_current_device_location/
+
             _locationManager = (LocationManager)GetSystemService(LocationService);
-            Criteria criteriaForLocationService = new Criteria
-            {
-                Accuracy = Accuracy.Fine
-            };
+
+            Criteria criteriaForLocationService = new Criteria { Accuracy = Accuracy.Fine };
+
             IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
 
             if (acceptableLocationProviders.Any())
-            {
                 _locationProvider = acceptableLocationProviders.First();
-            }
             else
-            {
                 _locationProvider = String.Empty;
-            }
-            
-            Task loop = LoopGps();
+
+            Task loop = LoopGps(); //Start gps loop
         }
 
+        /// <summary>
+        /// async Loop that handles everything
+        /// regarding updating the units location.
+        /// Is intervall based from server response. 
+        /// </summary>
+        /// <returns></returns>
         async Task LoopGps()
         {
             int num = 20;
@@ -111,14 +127,19 @@ namespace StretchGarage.Android
                 await Task.Delay(5000);
                 _locationManager.RemoveUpdates(this); //Stop gps
                 _gpsRunning = false;
-                await ApiRequest.GetInterval();
+                await ApiRequest.GetInterval(_currentLocation.Latitude, _currentLocation.Longitude);
                 await Task.Delay(5000);
                 num--;
             }
-
-            //return true;
         }
 
+        /// <summary>
+        /// Updates global variable _currentLocation
+        /// when method is called.
+        /// Is automatically called onChange of value
+        /// of lat/long when gps is on.
+        /// </summary>
+        /// <param name="location"></param>
         public void OnLocationChanged(Location location)
         {
             _currentLocation = location;
@@ -127,9 +148,9 @@ namespace StretchGarage.Android
         #region Override methods not used
         public void OnProviderDisabled(string provider) { }
         public void OnProviderEnabled(string provider) { }
-        public void OnStatusChanged(string provider, Availability status, Bundle extras) { } 
+        public void OnStatusChanged(string provider, Availability status, Bundle extras) { }
+        #endregion 
         #endregion
-
     }
 }
 
