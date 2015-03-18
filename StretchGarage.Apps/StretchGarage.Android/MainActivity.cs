@@ -127,7 +127,7 @@ namespace StretchGarage.Android
                 await Task.Delay(5000);
                 _locationManager.RemoveUpdates(this); //Stop gps
                 _gpsRunning = false;
-                await ApiRequest.GetInterval(_currentLocation.Latitude, _currentLocation.Longitude);
+                await ApiRequest.GetInterval(0, _currentLocation.Latitude, _currentLocation.Longitude);
                 await Task.Delay(5000);
                 num--;
             }

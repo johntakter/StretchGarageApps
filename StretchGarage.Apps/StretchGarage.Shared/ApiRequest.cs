@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
@@ -10,16 +10,29 @@ namespace StretchGarage.Shared
 {
     public class ApiRequest
     {
-        public async static Task<object> GetUnitId()
+        /// <summary>
+        /// Method creates unit on server and its db.
+        /// Adds users name to unit.
+        /// Returns the id in db for the user.
+        /// </summary>
+        /// <returns></returns>
+        public async static Task<object> GetUnitId(string name)
         {
-            sbytetring url = "h" +
-                             "ttp://stretchgarageweb.azurewebsites.net/api/ParkingPlace/0";
+            int type = 0;
+            string url = "http://stretchgarageweb.azurewebsites.net/api/ParkingPlace/0";
 
             var content = await GetContent(url);
             return content;
         }
 
-        public async static Task<object> GetInterval(double latitude, double longitude)
+        /// <summary>
+        /// Gets intervall from server for unit decided
+        /// by params lat/long given on call.
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        /// <returns></returns>
+        public async static Task<object> GetInterval(int id, double latitude, double longitude)
         {
             string url = "http://stretchgarageweb.azurewebsites.net/api/Unit/";
 
@@ -27,6 +40,13 @@ namespace StretchGarage.Shared
             return content;
         }
 
+        /// <summary>
+        /// Gets content from http request from server with given
+        /// url in param.
+        /// returns content of response from server to caller.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         async static Task<object> GetContent(string url)
         {
             // Create an HTTP web request using the URL:
