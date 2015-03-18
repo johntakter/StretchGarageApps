@@ -19,12 +19,11 @@ using StringBuilder = System.Text.StringBuilder;
 
 namespace StretchGarage.Android
 {
-    [Activity(Label = "Get Location", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "Stretch Garage", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity, ILocationListener
     {
         //http://developer.xamarin.com/recipes/android/os_device_resources/gps/get_current_device_location/
-        TextView _locationText;
-        TextView _addressText;
+
         Location _currentLocation; //Holder of lat/long (_currentLocation.Latitude/Longitude)
         LocationManager _locationManager;
         String _locationProvider;
@@ -33,38 +32,17 @@ namespace StretchGarage.Android
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            ActionBar.Hide();
             SetContentView(Resource.Layout.Main);
-            
-            _addressText = FindViewById<TextView>(Resource.Id.address_text);
-            _locationText = FindViewById<TextView>(Resource.Id.location_text);
+
             InitializeLocationManager();
-            
 
-            /*
-            //ORGINAL SAKER!!!
-            base.OnCreate(bundle);
-            // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.Main);
-
-            var webView = FindViewById<WebView>(Resource.Id.webView);
-            webView.Settings.JavaScriptEnabled = true;
-
-            // Use subclassed WebViewClient to intercept hybrid native calls
-            webView.SetWebViewClient(new HybridWebViewClient());
-
-            Test test = new Test();
-            string t = test.TestFunction();
-
-            // Render the view from the type generated from RazorView.cshtml
-            var model = new Model1() { Text = t };
-            var template = new RazorView() { Model = model };
-            var page = template.GenerateString();
-
-            // Load the rendered HTML into the view with a base URL 
-            // that points to the root of the bundled Assets folder
-            webView.LoadDataWithBaseURL("file:///android_asset/", page, "text/html", "UTF-8", null);
-             */
-
+            WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
+            localWebView.Settings.JavaScriptEnabled = true;
+            localWebView.SetWebViewClient(new HybridWebViewClient());
+            localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/ParkingPlace/0");
+            //localWebView.Settings.LoadWithOverviewMode = true;
+            //localWebView.Settings.UseWideViewPort = true;
         }
 
         private class HybridWebViewClient : WebViewClient
@@ -133,6 +111,7 @@ namespace StretchGarage.Android
                 await Task.Delay(5000);
                 _locationManager.RemoveUpdates(this); //Stop gps
                 _gpsRunning = false;
+                await ApiRequest.GetInterval();
                 await Task.Delay(5000);
                 num--;
             }
@@ -143,21 +122,13 @@ namespace StretchGarage.Android
         public void OnLocationChanged(Location location)
         {
             _currentLocation = location;
-            
-            if (_currentLocation == null)
-            {
-                _locationText.Text = "Unable to determine your location.";
-            }
-            else
-            {
-                if (_gpsRunning)
-                    _locationText.Text = String.Format("{0},{1}", _currentLocation.Latitude, _currentLocation.Longitude);
-            }
         }
 
-        public void OnProviderDisabled(string provider){}
-        public void OnProviderEnabled(string provider){}
-        public void OnStatusChanged(string provider, Availability status, Bundle extras){}
+        #region Override methods not used
+        public void OnProviderDisabled(string provider) { }
+        public void OnProviderEnabled(string provider) { }
+        public void OnStatusChanged(string provider, Availability status, Bundle extras) { } 
+        #endregion
 
     }
 }
