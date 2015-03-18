@@ -1,1 +1,1 @@
-<resources><string name="Hello">Hello World, Click Me!</string><string name="ApplicationName">StretchGarage.Android</string></resources>
+<resources><string name="ApplicationName">StretchGarage.Android</string><string name="dialog_ok">OK</string><string name="dialog_cancel">Cancel</string></resources>

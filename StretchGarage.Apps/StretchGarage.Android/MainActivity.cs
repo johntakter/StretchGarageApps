@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Locations;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Views;
 using Android.Webkit;
@@ -26,6 +27,7 @@ namespace StretchGarage.Android
         LocationManager _locationManager; //Holder of accuracy and locationprovider
         String _locationProvider;
         private bool _gpsRunning = false;
+        private int _id = -1;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -34,6 +36,9 @@ namespace StretchGarage.Android
             SetContentView(Resource.Layout.Main); //Sets layout
 
             InitWebView(); //Inits webview
+
+            if (!LoadId()) //Loads id value to _id
+                ShowNewUserScreen();
 
             InitializeLocationManager(); //inits gps loop
         }
@@ -150,6 +155,57 @@ namespace StretchGarage.Android
         public void OnProviderEnabled(string provider) { }
         public void OnStatusChanged(string provider, Availability status, Bundle extras) { }
         #endregion 
+        #endregion
+
+        #region Id functions
+        private void SaveId(int id)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutInt("key_ID", id);
+        }
+
+        private bool LoadId()
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            _id = prefs.GetInt("key_ID", _id);
+
+            return _id != -1; //returns true or false depending on if its -1
+        }
+
+        private AlertDialog ShowNewUserScreen()
+        {
+            var customView = LayoutInflater.Inflate(Resource.Layout.CreateUserDialog, null);
+
+            var builder = new AlertDialog.Builder(this);
+            builder.SetView(customView);
+            builder.SetPositiveButton(Resource.String.dialog_ok, OkClicked);
+            builder.SetNegativeButton(Resource.String.dialog_cancel, CancelClicked);
+            
+            AlertDialog a = builder.Create();
+            builder.Show();
+            return a;
+        }
+        private void OkClicked(object sender, DialogClickEventArgs args)
+        {
+            var dialog = (AlertDialog)sender;
+            var username = (EditText)dialog.FindViewById(Resource.Id.username);
+
+            if (!string.IsNullOrEmpty(username.Text))
+                Toast.MakeText(this, string.Format("Username: {0} ", username.Text), ToastLength.Short).Show();
+            else
+            {
+                Toast.MakeText(this, "Please fill in a username before clicking \"Ok\"", ToastLength.Short).Show();
+                ShowNewUserScreen();
+            }
+                
+        }
+        private void CancelClicked(object sender, DialogClickEventArgs args)
+        {
+            ShowNewUserScreen();
+        }
+
+
         #endregion
     }
 }

@@ -63,8 +63,11 @@ namespace StretchGarage.Android
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f060001
+			public const int LocalWebView = 2131099649;
+			
 			// aapt resource value: 0x7f060000
-			public const int LocalWebView = 2131099648;
+			public const int username = 2131099648;
 			
 			static Id()
 			{
@@ -80,7 +83,10 @@ namespace StretchGarage.Android
 		{
 			
 			// aapt resource value: 0x7f030000
-			public const int Main = 2130903040;
+			public const int CreateUserDialog = 2130903040;
+			
+			// aapt resource value: 0x7f030001
+			public const int Main = 2130903041;
 			
 			static Layout()
 			{
@@ -95,11 +101,14 @@ namespace StretchGarage.Android
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f040001
-			public const int ApplicationName = 2130968577;
-			
 			// aapt resource value: 0x7f040000
-			public const int Hello = 2130968576;
+			public const int ApplicationName = 2130968576;
+			
+			// aapt resource value: 0x7f040002
+			public const int dialog_cancel = 2130968578;
+			
+			// aapt resource value: 0x7f040001
+			public const int dialog_ok = 2130968577;
 			
 			static String()
 			{

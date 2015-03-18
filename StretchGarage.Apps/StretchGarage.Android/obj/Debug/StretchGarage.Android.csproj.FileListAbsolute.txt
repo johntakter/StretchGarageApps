@@ -26,3 +26,4 @@ C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.An
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\res\drawable\icon.png
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\R.cs.flag
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\uploadflags.txt
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\res\layout\createuserdialog.xml
