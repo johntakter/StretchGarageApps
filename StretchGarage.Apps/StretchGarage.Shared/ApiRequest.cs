@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
@@ -10,15 +10,16 @@ namespace StretchGarage.Shared
 {
     public class ApiRequest
     {
-
         public async static Task<object> GetUnitId()
         {
-            string url = "http://stretchgarageweb.azurewebsites.net/api/ParkingPlace/0";
+            sbytetring url = "h" +
+                             "ttp://stretchgarageweb.azurewebsites.net/api/ParkingPlace/0";
 
             var content = await GetContent(url);
             return content;
         }
-        public async static Task<object> GetInterval()
+
+        public async static Task<object> GetInterval(double latitude, double longitude)
         {
             string url = "http://stretchgarageweb.azurewebsites.net/api/Unit/";
 
@@ -53,7 +54,5 @@ namespace StretchGarage.Shared
                 }
             }
         }
-
-
     }
 }
