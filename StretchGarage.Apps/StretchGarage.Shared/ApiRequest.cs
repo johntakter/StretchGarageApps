@@ -5,6 +5,7 @@ using System.Web;
 using System.Net;
 using System.IO;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace StretchGarage.Shared
 {
@@ -79,5 +80,35 @@ namespace StretchGarage.Shared
                 }
             }
         }
+
+        internal class HttpResponseMessage
+        {
+            public bool Success { get; set; }
+            public string Message { get; set; }
+            public bool Content { get; set; }
+            //"{\"success\":true,\"message\":\"\",\"content\":4}";
+            public HttpResponseMessage(string response, int request)
+            {
+                Success = Convert.ToBoolean(Between(response, "\"success\":", ",\"message\":"))
+            }
+
+            private ParseContentFromResponse(string response, int request)
+            {
+                switch (request)
+                {
+                    case 0:
+
+                        break;
+                }
+            }
+
+            static string Between(string source, string left, string right)
+            {
+                return Regex.Match(
+                    source, 
+                    string.Format("{0}(.*){1}", left, right))
+                    .Groups[1].Value;
+            }
+        } 
     }
 }
