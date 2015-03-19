@@ -18,11 +18,16 @@ namespace StretchGarage.Shared
         /// <returns></returns>
         public async static Task<int> GetUnitId(string name)
         {
-            int type = 0;
-            string url = "http://stretchgarageweb.azurewebsites.net/api/ParkingPlace/0";
+            string url = string.Format("http://localhost:3186/api/Unit/{0}/{1}", name, 0);
 
-            var content = await GetContent(url);
-            return 0;
+            int id = -1;
+            try
+            {
+                var content = await GetContent(url);
+                id = Convert.ToInt32(content);
+            }
+            catch (Exception) { throw; }
+            return id;
         }
 
         /// <summary>
