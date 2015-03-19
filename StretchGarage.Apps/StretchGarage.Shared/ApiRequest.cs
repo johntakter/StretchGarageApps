@@ -16,13 +16,13 @@ namespace StretchGarage.Shared
         /// Returns the id in db for the user.
         /// </summary>
         /// <returns></returns>
-        public async static Task<object> GetUnitId(string name)
+        public async static Task<int> GetUnitId(string name)
         {
             int type = 0;
             string url = "http://stretchgarageweb.azurewebsites.net/api/ParkingPlace/0";
 
             var content = await GetContent(url);
-            return content;
+            return 0;
         }
 
         /// <summary>

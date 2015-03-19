@@ -39,8 +39,8 @@ namespace StretchGarage.Android
 
             if (!LoadId()) //Loads id value to _id
                 ShowNewUserScreen();
-
-            InitializeLocationManager(); //inits gps loop
+            else
+                InitializeLocationManager(); //inits gps loop
         }
 
         private class HybridWebViewClient : WebViewClient
@@ -158,54 +158,77 @@ namespace StretchGarage.Android
         #endregion
 
         #region Id functions
-        private void SaveId(int id)
+        /// <summary>
+        /// Creates user in db and saves id to shared pref.
+        /// </summary>
+        /// <param name="username"></param>
+        private async Task<bool> SaveId(string username)
         {
+            _id = await ApiRequest.GetUnitId(username); //Creates user id
+
+            //TODO: Check that valid id was created
+
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
             ISharedPreferencesEditor editor = prefs.Edit();
-            editor.PutInt("key_ID", id);
+            editor.PutInt("key_ID", _id);
+            editor.Apply();
+
+            return _id != -1; //returns true or false depending on if its -1
         }
 
+        /// <summary>
+        /// Loads shared preference for id.
+        /// Sets _id to shared pref value
+        /// </summary>
+        /// <returns>Returns true/false(-1) depending on if id is -1</returns>
         private bool LoadId()
         {
+            _id = -1;
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
             _id = prefs.GetInt("key_ID", _id);
 
             return _id != -1; //returns true or false depending on if its -1
         }
 
-        private AlertDialog ShowNewUserScreen()
+        /// <summary>
+        /// Creates and shows a dialog window to user
+        /// for entering a username
+        /// </summary>
+        private void ShowNewUserScreen()
         {
             var customView = LayoutInflater.Inflate(Resource.Layout.CreateUserDialog, null);
 
             var builder = new AlertDialog.Builder(this);
             builder.SetView(customView);
             builder.SetPositiveButton(Resource.String.dialog_ok, OkClicked);
-            builder.SetNegativeButton(Resource.String.dialog_cancel, CancelClicked);
-            
-            AlertDialog a = builder.Create();
+            builder.SetCancelable(false);
+
+            builder.Create();
             builder.Show();
-            return a;
         }
-        private void OkClicked(object sender, DialogClickEventArgs args)
+        /// <summary>
+        /// Handles dialog click event for ShowNewUserScreen dialog.
+        /// If valid username is entered then it calls SaveId method.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private async void OkClicked(object sender, DialogClickEventArgs args)
         {
             var dialog = (AlertDialog)sender;
             var username = (EditText)dialog.FindViewById(Resource.Id.username);
 
-            if (!string.IsNullOrEmpty(username.Text))
-                Toast.MakeText(this, string.Format("Username: {0} ", username.Text), ToastLength.Short).Show();
-            else
+            if (string.IsNullOrEmpty(username.Text))
             {
-                Toast.MakeText(this, "Please fill in a username before clicking \"Ok\"", ToastLength.Short).Show();
+                Toast.MakeText(this, "Please fill in a valid username", ToastLength.Long).Show();
                 ShowNewUserScreen();
+                return;
             }
-                
-        }
-        private void CancelClicked(object sender, DialogClickEventArgs args)
-        {
-            ShowNewUserScreen();
-        }
 
-
+            if (await SaveId(username.Text)) //Starts location manager if save id is ok.
+                InitializeLocationManager();
+            else //Failed saving to server
+                Toast.MakeText(this, "Failed to create user.", ToastLength.Long).Show();
+        }
         #endregion
     }
 }
