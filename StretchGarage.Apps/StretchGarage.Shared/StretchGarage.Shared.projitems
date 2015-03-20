@@ -9,6 +9,12 @@
     <Import_RootNamespace>StretchGarage.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ApiRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ApiRequestManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CheckLocation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SharedEnums\ApiCalls.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WebApiResponse.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)SharedObjects\" />
   </ItemGroup>
 </Project>

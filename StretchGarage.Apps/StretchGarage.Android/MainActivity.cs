@@ -86,7 +86,8 @@ namespace StretchGarage.Android
             WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
             localWebView.Settings.JavaScriptEnabled = true;
             localWebView.SetWebViewClient(new HybridWebViewClient());
-            localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/ParkingPlace/0");
+            //localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/ParkingPlace/0");
+            localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/");
             //localWebView.Settings.LoadWithOverviewMode = true;
             //localWebView.Settings.UseWideViewPort = true;
         }
@@ -113,7 +114,7 @@ namespace StretchGarage.Android
             else
                 _locationProvider = String.Empty;
 
-            Task loop = LoopGps(); //Start gps loop
+            Task loop = InitLoopGps(); //Start gps loop
         }
 
         /// <summary>
@@ -122,20 +123,51 @@ namespace StretchGarage.Android
         /// Is intervall based from server response. 
         /// </summary>
         /// <returns></returns>
-        async Task LoopGps()
+        async Task InitLoopGps()
         {
-            int num = 20;
-            while (num != 0)
+            StartStopGps(true);
+            await Task.Delay(9000);
+
+            if (_currentLocation == null)
+                return; //TODO: ADD DIALOG TO ASK USER TO START GPS
+            StartStopGps(false);
+            WebApiResponse response = await ApiRequestManager.GetInterval(0, _currentLocation.Latitude, _currentLocation.Longitude);
+            
+            if (!response.Success)
+                return; //TODO: ADD DIALOG TO ASK USER TO CHECK INTERNET CONNECTION
+
+            LoopGps((CheckLocation)response.Content);
+        }
+
+        private async void LoopGps(CheckLocation checkLocation)
+        {
+            StartStopGps(true);
+            await Task.Delay(2000);
+            if (_currentLocation == null)
             {
-                _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this); //Start gps
-                _gpsRunning = true;
-                await Task.Delay(5000);
-                _locationManager.RemoveUpdates(this); //Stop gps
-                _gpsRunning = false;
-                await ApiRequest.GetInterval(0, _currentLocation.Latitude, _currentLocation.Longitude);
-                await Task.Delay(5000);
-                num--;
+                //TODO: Handle if update isn't fast enough.
             }
+
+            StartStopGps(false);
+
+            WebApiResponse response = await ApiRequestManager.GetInterval(0, _currentLocation.Latitude, _currentLocation.Longitude);
+
+            if (!response.Success)
+            {
+                //TODO: Handle if response didn't connect to server
+            }
+            await Task.Delay(checkLocation.Interval);
+            LoopGps((CheckLocation)response.Content);
+            
+        }
+
+
+        async Task StartStopGps(bool start)
+        {
+            if (start)
+                _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this); //Start gps
+            else
+                _locationManager.RemoveUpdates(this); //Stop gps
         }
 
         /// <summary>
@@ -164,9 +196,17 @@ namespace StretchGarage.Android
         /// <param name="username"></param>
         private async Task<bool> SaveId(string username)
         {
-            _id = await ApiRequest.GetUnitId(username); //Creates user id
+            WebApiResponse response = await ApiRequestManager.GetUnitId(username); //Creates user id
 
-            //TODO: Check that valid id was created
+            if (!response.Success)
+            {
+                Toast.MakeText(this, response.Message, ToastLength.Long).Show();
+                return false;
+                //TODO: Check that valid id was created
+
+            }
+
+            _id = (int)response.Content;
 
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
             ISharedPreferencesEditor editor = prefs.Edit();

@@ -17,7 +17,6 @@ C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.An
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.dll.mdb
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android.apk
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\bin\Debug\StretchGarage.Android-Signed.apk
-C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\StretchGarage.Android.csprojResolveAssemblyReference.cache
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\StretchGarage.Android.dll
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\StretchGarage.Android.pdb
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\android\bin\StretchGarage.Android.apk
@@ -27,3 +26,4 @@ C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.An
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\R.cs.flag
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\uploadflags.txt
 C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\res\layout\createuserdialog.xml
+C:\Users\John\Source\Repos\StretchGarageApps\StretchGarage.Apps\StretchGarage.Android\obj\Debug\StretchGarage.Android.csprojResolveAssemblyReference.cache
