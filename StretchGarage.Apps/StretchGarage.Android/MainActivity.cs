@@ -23,11 +23,13 @@ namespace StretchGarage.Android
     [Activity(Label = "Stretch Garage", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity, ILocationListener
     {
-        Location _currentLocation; //Holder of lat/long (_currentLocation.Latitude/Longitude)
+        //Location _currentLocation; //Holder of lat/long (_currentLocation.Latitude/Longitude)
         LocationManager _locationManager; //Holder of accuracy and locationprovider
         String _locationProvider;
         private int _id = -1;
-        private WebView localWebView;
+        private WebView _webView;
+        private bool GpsRunning = false;
+        private DateTime CheckSpeedTime = DateTime.MinValue;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -84,10 +86,10 @@ namespace StretchGarage.Android
         /// </summary>
         private void InitWebView()
         {
-            localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
-            localWebView.Settings.JavaScriptEnabled = true;
-            localWebView.SetWebViewClient(new HybridWebViewClient());
-            localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/");
+            _webView = FindViewById<WebView>(Resource.Id.LocalWebView);
+            _webView.Settings.JavaScriptEnabled = true;
+            _webView.SetWebViewClient(new HybridWebViewClient());
+            _webView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/");
             //localWebView.Settings.LoadWithOverviewMode = true;
             //localWebView.Settings.UseWideViewPort = true;
         }
@@ -99,9 +101,9 @@ namespace StretchGarage.Android
         /// </summary>
         public override void OnBackPressed()
         {
-            if (localWebView.CanGoBack())
+            if (_webView.CanGoBack())
             {
-                localWebView.GoBack();
+                _webView.GoBack();
             }
             else
             {
@@ -118,73 +120,43 @@ namespace StretchGarage.Android
         /// </summary>
         void InitializeLocationManager()
         {
-            //http://developer.xamarin.com/recipes/android/os_device_resources/gps/get_current_device_location/
-
             _locationManager = (LocationManager)GetSystemService(LocationService);
 
-            Criteria criteriaForLocationService = new Criteria { Accuracy = Accuracy.Fine };
-
-            IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
-
-            if (acceptableLocationProviders.Any())
-                _locationProvider = acceptableLocationProviders.First();
-            else
-                _locationProvider = String.Empty; //TODO: FIX TO TRY AGAIN AFTER A WHILE
-
-            Task loop = InitLoopGps(); //Start gps loop
+            if (SetBestProvider(Accuracy.Medium))
+                StartGps();
         }
 
         /// <summary>
-        /// async Loop that handles everything
-        /// regarding updating the units location.
-        /// Is intervall based from server response. 
+        /// Sets _locationProvider to BestProvider
+        /// for given accuracy
+        /// if no provider found it returns false
         /// </summary>
         /// <returns></returns>
-        async Task InitLoopGps()
+        private bool SetBestProvider(Accuracy accuracy)
         {
-            StartStopGps(true);
-            await Task.Delay(9000);
+            Criteria criteriaForLocationService = new Criteria { Accuracy = accuracy };
+            _locationProvider = _locationManager.GetBestProvider(criteriaForLocationService, true);
 
-            if (_currentLocation == null)
-                return; //TODO: ADD DIALOG TO ASK USER TO START GPS
-            StartStopGps(false);
-            WebApiResponse response = await ApiRequestManager.GetInterval(_id, _currentLocation.Latitude, _currentLocation.Longitude);
-            
-            if (!response.Success)
-                return; //TODO: ADD DIALOG TO ASK USER TO CHECK INTERNET CONNECTION
+            return _locationProvider != null;
 
-            LoopGps((CheckLocation)response.Content);
-        }
-
-        private async void LoopGps(CheckLocation checkLocation)
-        {
-            StartStopGps(true);
-            await Task.Delay(2000);
-            if (_currentLocation == null)
-            {
-                //TODO: Handle if update isn't fast enough.
-            }
-
-            StartStopGps(false);
-
-            WebApiResponse response = await ApiRequestManager.GetInterval(0, _currentLocation.Latitude, _currentLocation.Longitude);
-
-            if (!response.Success)
-            {
-                //TODO: Handle if response didn't connect to server
-            }
-            await Task.Delay(checkLocation.Interval);
-            LoopGps((CheckLocation)response.Content);
-            
-        }
-
-
-        async Task StartStopGps(bool start)
-        {
-            if (start)
-                _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this); //Start gps
+            #region Old code
+            IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
+            if (acceptableLocationProviders.Any())
+                _locationProvider = acceptableLocationProviders.First();
             else
-                _locationManager.RemoveUpdates(this); //Stop gps
+                _locationProvider = String.Empty; //TODO: FIX TO TRY AGAIN AFTER A WHILE 
+            #endregion
+        }
+        
+        /// <summary>
+        /// Starts Gps with global
+        /// provider
+        /// </summary>
+        /// <returns></returns>
+        async Task StartGps()
+        {
+            GpsRunning = true;
+            _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this); //Start gps
         }
 
         /// <summary>
@@ -196,13 +168,52 @@ namespace StretchGarage.Android
         /// <param name="location"></param>
         public void OnLocationChanged(Location location)
         {
-            _currentLocation = location;
+            if (CheckSpeedTime != null && CheckSpeedTime < DateTime.Now)
+            {
+                Task getInterval = GetInterval(location);
+            }
+            else if (location != null && GpsRunning)
+            {
+                Task getInterval = GetInterval(location);
+            }
+        }
+
+        async Task GetInterval(Location location)
+        {
+            if (CheckSpeedTime == DateTime.MinValue)
+            {
+                GpsRunning = false;
+                _locationManager.RemoveUpdates(this);
+            }
+
+            var checkLocation = await GetServerResult(location);
+
+            string toastMessage = string.Format("Location(lat:{0} long:{1}) IsParked:{2}, CheckSpeed:{3}", location.Latitude, location.Longitude, checkLocation.IsParked, checkLocation.CheckSpeed);
+            Toast.MakeText(this, toastMessage, ToastLength.Long).Show();
+
+            await Task.Delay(checkLocation.Interval);
+            if (SetBestProvider(Accuracy.Medium))
+                StartGps();
+        }
+
+        async Task<CheckLocation> GetServerResult(Location location)
+        {
+            WebApiResponse response = await ApiRequestManager.GetInterval(_id, location.Latitude, location.Longitude);
+
+            CheckLocation result = !response.Success ? (CheckLocation) response.Content : new CheckLocation(20000, false, false);
+
+            CheckSpeedTime = result.CheckSpeed ? DateTime.UtcNow.AddMilliseconds(result.Interval) : DateTime.MinValue;
+
+            return result;
         }
 
         #region Override methods not used
-        public void OnProviderDisabled(string provider) { }
-        public void OnProviderEnabled(string provider) { }
-        public void OnStatusChanged(string provider, Availability status, Bundle extras) { }
+
+        public void OnProviderDisabled(string provider){}
+
+        public void OnProviderEnabled(string provider){}
+
+        public void OnStatusChanged(string provider, Availability status, Bundle extras){}
         #endregion 
         #endregion
 
