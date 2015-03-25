@@ -10,6 +10,7 @@ namespace StretchGarage.Shared
         public bool Success { get; set; }
         public string Message { get; set; }
         public object Content { get; set; }
+        
 
         public WebApiResponse(string response, ApiCall call)
         {
@@ -49,13 +50,15 @@ namespace StretchGarage.Shared
         }
         private CheckLocation GetIntervalObject(string response)
         {
-            //"{\"success\":true,\"message\":\"\",\"content\":{\"interval\":10,\"checkSpeed\":false}}"
+            //"{\"success\":true,\"message\":\"\",\"content\":{\"interval\":10,\"checkSpeed\":false,\"isParked\":false}}"
             int interval = -1;
             bool checkSpeed = false;
+            bool isParked = false;
             try
             {
                 interval = Convert.ToInt32(Between(response, "\"interval\":", ",\"checkSpeed\"")) * 1000;
-                checkSpeed = Convert.ToBoolean(Between(response, "\"checkSpeed\":", "}}"));
+                checkSpeed = Convert.ToBoolean(Between(response, "\"checkSpeed\":", ",\"isParked\":"));
+                isParked = Convert.ToBoolean(Between(response, ",\"isParked\":", "}}"));
             }
             catch (Exception)
             {
@@ -63,7 +66,7 @@ namespace StretchGarage.Shared
                 Message = "Failed to parse content from server.";
                 return null;
             }
-            return new CheckLocation(interval, checkSpeed);
+            return new CheckLocation(interval, checkSpeed, isParked);
         }
 
         static string Between(string source, string left, string right)

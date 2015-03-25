@@ -26,8 +26,8 @@ namespace StretchGarage.Android
         Location _currentLocation; //Holder of lat/long (_currentLocation.Latitude/Longitude)
         LocationManager _locationManager; //Holder of accuracy and locationprovider
         String _locationProvider;
-        private bool _gpsRunning = false;
         private int _id = -1;
+        private WebView localWebView;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -37,9 +37,10 @@ namespace StretchGarage.Android
 
             InitWebView(); //Inits webview
 
-            if (!LoadId()) //Loads id value to _id
+            _id = 0; //TEST!!!
+            /*if (!LoadId()) //Loads id value to _id
                 ShowNewUserScreen();
-            else
+            else*/
                 InitializeLocationManager(); //inits gps loop
         }
 
@@ -83,13 +84,29 @@ namespace StretchGarage.Android
         /// </summary>
         private void InitWebView()
         {
-            WebView localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
+            localWebView = FindViewById<WebView>(Resource.Id.LocalWebView);
             localWebView.Settings.JavaScriptEnabled = true;
             localWebView.SetWebViewClient(new HybridWebViewClient());
-            //localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/ParkingPlace/0");
             localWebView.LoadUrl("http://stretchgarageweb.azurewebsites.net/#/");
             //localWebView.Settings.LoadWithOverviewMode = true;
             //localWebView.Settings.UseWideViewPort = true;
+        }
+
+        /// <summary>
+        /// Override method for handling back press.
+        /// Changes back button to handle webview instead
+        /// for activity window
+        /// </summary>
+        public override void OnBackPressed()
+        {
+            if (localWebView.CanGoBack())
+            {
+                localWebView.GoBack();
+            }
+            else
+            {
+                //super.OnBackPressed();
+            }
         }
 
         #region GPS Loop and Initialization
@@ -112,7 +129,7 @@ namespace StretchGarage.Android
             if (acceptableLocationProviders.Any())
                 _locationProvider = acceptableLocationProviders.First();
             else
-                _locationProvider = String.Empty;
+                _locationProvider = String.Empty; //TODO: FIX TO TRY AGAIN AFTER A WHILE
 
             Task loop = InitLoopGps(); //Start gps loop
         }
@@ -131,7 +148,7 @@ namespace StretchGarage.Android
             if (_currentLocation == null)
                 return; //TODO: ADD DIALOG TO ASK USER TO START GPS
             StartStopGps(false);
-            WebApiResponse response = await ApiRequestManager.GetInterval(0, _currentLocation.Latitude, _currentLocation.Longitude);
+            WebApiResponse response = await ApiRequestManager.GetInterval(_id, _currentLocation.Latitude, _currentLocation.Longitude);
             
             if (!response.Success)
                 return; //TODO: ADD DIALOG TO ASK USER TO CHECK INTERNET CONNECTION

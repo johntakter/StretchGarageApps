@@ -8,11 +8,13 @@ namespace StretchGarage.Shared
     {
         public int Interval { get; set; }
         public bool CheckSpeed { get; set; }
+        public bool IsParked { get; set; }
 
-        public CheckLocation(int interval, bool checkSpeed)
+        public CheckLocation(int interval, bool checkSpeed, bool isParked)
         {
             Interval = interval;
             CheckSpeed = checkSpeed;
+            IsParked = isParked;
         }
     }
 }
