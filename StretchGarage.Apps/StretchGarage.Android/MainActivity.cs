@@ -188,7 +188,7 @@ namespace StretchGarage.Android
 
             var checkLocation = await GetServerResult(location);
 
-            string toastMessage = string.Format("Location(lat:{0} long:{1}) IsParked:{2}, CheckSpeed:{3}", location.Latitude, location.Longitude, checkLocation.IsParked, checkLocation.CheckSpeed);
+            string toastMessage = string.Format("Location(lat:{0} long:{1}) IsParked:{2}, CheckSpeed:{3}, Interval:{4}", location.Latitude, location.Longitude, checkLocation.IsParked, checkLocation.CheckSpeed, checkLocation.Interval);
             Toast.MakeText(this, toastMessage, ToastLength.Long).Show();
 
             await Task.Delay(checkLocation.Interval);
@@ -200,7 +200,7 @@ namespace StretchGarage.Android
         {
             WebApiResponse response = await ApiRequestManager.GetInterval(_id, location.Latitude, location.Longitude);
 
-            CheckLocation result = !response.Success ? (CheckLocation) response.Content : new CheckLocation(20000, false, false);
+            CheckLocation result = response.Success ? (CheckLocation) response.Content : new CheckLocation(20000, false, false);
 
             CheckSpeedTime = result.CheckSpeed ? DateTime.UtcNow.AddMilliseconds(result.Interval) : DateTime.MinValue;
 
